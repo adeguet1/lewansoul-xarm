@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package>
+  <name>lewansoul_xarm</name>
+  <version>0.0.0</version>
+  <description>Python class to communicate with LewanSoul xArm over HID</description>
+
+  <maintainer email="anton.deguet@jhu.edu">Anton Deguet</maintainer>
+  <license>CISST</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>rospy</build_depend>
+  <run_depend>rospy</run_depend>
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+  </export>
+
+</package>
