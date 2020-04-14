@@ -22,12 +22,12 @@ class arm(object):
     """Arm class to define a logical arm on top of the servo controller.
     This allows to use a subset of servos to define different kinematic
     chains.
-    
+
     The most practical use is to separate the servos used for the arm
     kinematic from the gripper itself.  The xArm is actually not a 6
     DOFs robot, it has 5 servos ([6, 5, 4, 3, 2]) for the arm and the
     last one ([1]).  As such it is underactuated.
-    
+
     The typical use is:
     import lewansoul_xarm
     c = lewansoul_xarm.controller()
@@ -39,13 +39,14 @@ class arm(object):
     arm.move_jp(position)
     """
 
-    def __init__(self, controller, servo_ids):
+    def __init__(self, controller, name, servo_ids):
         """Initialize the robot using a controller and a list of servo ids.
         The constructor also creates a unique id for the arm using the
         controller's serial number and the list of servo ids used for
         the arm.
         """
         self._controller = controller
+        self._name = name
         self._servo_ids = servo_ids
         self._unique_name = 'xArm-' + self._controller._serial_number + '-' + '-'.join(map(str, servo_ids))
         self._configuration = {}
@@ -73,7 +74,7 @@ class arm(object):
         - disable the arm so the servos are free to move (arm.disable())
         - position the arm in "zero" position
         - call arm.calibrate()
-        
+
         The position offsets are used after the calibration and saved
         in a JSON configuration file using the arm unique id (see
         __init__ documentation).  Future calls of home() or

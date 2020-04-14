@@ -11,8 +11,10 @@
 
 # --- end cisst license ---
 
-__all__ = ["arm", "controller"]
+__all__ = ["arm", "arm_ros", "controller", "controller_ros"]
 
 # main arm class
 from .arm import arm
+from .arm_ros import arm_ros
 from .controller import controller
+from .controller_ros import controller_ros

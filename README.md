@@ -63,6 +63,20 @@ a.move_jp(p)
 sudo apt install ros-melodic-joint-state-publisher-gui
 ```
 
+For RViz:
 ```sh
 roslaunch lewansoul_xarm display.launch
+```
+
+To start the controller ROS node:
+```sh
+rosrun lewansoul_xarm xArm-ros.py
+```
+
+To calibrate (this has to be done for `/xArm` and `/gripper`):
+```sh
+rostopic pub -1 /xArm/disable std_msgs/Empty "{}"
+# now move the arm to zero position
+rostopic pub -1 /xArm/calibrate std_msgs/Empty "{}"
+rostopic pub -1 /xArm/enable std_msgs/Empty "{}"
 ```

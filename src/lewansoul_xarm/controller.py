@@ -29,6 +29,7 @@ import math
 import easyhid
 import numpy
 import itertools
+import threading
 import lewansoul_xarm
 
 def integer_to_bits(v):
@@ -42,11 +43,6 @@ class controller(object):
 
     # initialize the controller
     def __init__(self, pid = 22352):
-        # base class constructor in separate method so it can be called in derived classes
-        self.__init_controller(pid)
-
-
-    def __init_controller(self, pid = 22352):
         """
         """
         # stores an enumeration of all the connected USB HID devices
@@ -60,25 +56,32 @@ class controller(object):
             print(dev.description())
 
         assert len(devices) > 0
-        self._controller = devices[0]
+        self._device = devices[0]
 
         # open a device
-        self._controller.open()
-        self._serial_number = self._controller.serial_number.encode('ascii')
+        self._device.open()
+        self._serial_number = self._device.serial_number.encode('ascii')
         print('connected to xArm controller serial number: ' + self._serial_number)
 
         # compute bits_to_rads: Lewansoul bits are 1000 for 240 degree
         # range, then convert from degrees to radians
         self.bits_to_si = math.radians((240.0 / 1000.0))
 
+        # list of arms
+        self._arms = []
+
+        # lock to make sure read/writes are safe
+        self._lock = threading.RLock()
+
 
     def __del__(self):
         print('closing xArm controller')
-        self._controller.close()
+        self._device.close()
 
 
-    def add_arm(self, *servo_ids):
-        new_arm = lewansoul_xarm.arm(self, servo_ids)
+    def add_arm(self, name, *servo_ids):
+        new_arm = lewansoul_xarm.arm(self, name, servo_ids)
+        self._arms.append(new_arm)
         return new_arm
 
 
@@ -88,13 +91,15 @@ class controller(object):
         ServoPositionRead 21 (byte)count { (byte)id }; (byte)count { (byte)id (ushort)position }
         """
         nb_servos = len(servo_ids)
-        self._controller.write(itertools.chain([0x55, 0x55,
+        with self._lock:
+            self._device.write(itertools.chain([0x55, 0x55,
                                                 3 + nb_servos, # length of command
                                                 CMD_MULT_SERVO_POS_READ,
                                                 nb_servos]
                                                ,
                                                servo_ids))
-        response = self._controller.read()
+            response = self._device.read()
+
         # check first two elements of answer
         assert response[0] == 0x55
         assert response[1] == 0x55
@@ -122,7 +127,8 @@ class controller(object):
                    nb_servos + 3, # msg length
                    CMD_MULT_SERVO_UNLOAD,
                    nb_servos]
-        self._controller.write(itertools.chain(command, servo_ids))
+        with self._lock:
+            self._device.write(itertools.chain(command, servo_ids))
 
 
     def move_jp(self, servo_ids, goals_si, time_s = 0.0):
@@ -149,4 +155,5 @@ class controller(object):
             command.append(servo_id)
             command.extend(integer_to_bits(int(goals[i])))
 
-        self._controller.write(command)
+        with self._lock:
+            self._device.write(command)
