@@ -32,6 +32,8 @@ class arm_ros(object):
         ns = self._arm._name + '/'
         # create publishers
         self._measured_js_msg = sensor_msgs.msg.JointState()
+        for i in range(len(self._arm._servo_ids)):
+            self._measured_js_msg.name.append(self._arm._name + str(i + 1))
         self._measured_js_publisher = rospy.Publisher(ns + 'measured_js',
                                                       sensor_msgs.msg.JointState,
                                                       queue_size = 10)
