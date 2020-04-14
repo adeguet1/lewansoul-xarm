@@ -55,3 +55,14 @@ p = a.measured_jp()
 p[0] = p[0] + math.pi / 4.0 # start with a small motion
 a.move_jp(p)
 ```
+
+
+## ROS notes
+
+```sh
+sudo apt install ros-melodic-joint-state-publisher-gui
+```
+
+```sh
+roslaunch lewansoul_xarm display.launch
+```
