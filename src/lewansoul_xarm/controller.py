@@ -20,11 +20,14 @@ https://github.com/maximkulkin/lewansoul-lx16a
 sudo apt-get install libhidapi-hidraw0 libhidapi-libusb0 python-hid
 pip install --user easyhid
 """
+CMD_SERVO_MOVE = 3
+CMD_GET_BATTERY_VOLTAGE = 15
+CMD_MULT_SERVO_UNLOAD = 20
+CMD_MULT_SERVO_POS_READ = 21
 
 import math
 import easyhid
 import numpy
-import PyKDL
 import itertools
 import lewansoul_xarm
 
@@ -87,7 +90,7 @@ class controller(object):
         nb_servos = len(servo_ids)
         self._controller.write(itertools.chain([0x55, 0x55,
                                                 3 + nb_servos, # length of command
-                                                21, # command id
+                                                CMD_MULT_SERVO_POS_READ,
                                                 nb_servos]
                                                ,
                                                servo_ids))
@@ -112,12 +115,23 @@ class controller(object):
         return positions
 
 
+    def disable(self, servo_ids):
+        # command
+        nb_servos = len(servo_ids)
+        command = [0x55, 0x55,
+                   nb_servos + 3, # msg length
+                   CMD_MULT_SERVO_UNLOAD,
+                   nb_servos]
+        self._controller.write(itertools.chain(command, servo_ids))
+
+
     def move_jp(self, servo_ids, goals_si, time_s = 0.0):
-        assert len(goals_si) == len(servo_ids)
+        nb_servos = len(goals_si)
+        assert nb_servos == len(servo_ids)
 
         # should be replaced by computation using optimal joint velocities
         if time_s == 0.0:
-            time_s = 5.0
+            time_s = 2.0
         elif time_s > 20:
             time_s = 20.0
         time_ms = int(time_s * 1000);
@@ -127,9 +141,9 @@ class controller(object):
 
         # command
         command = [0x55, 0x55,
-                   len(5 + goals * 3), # msg length
-                   3, # cmd
-                   len(goals)]
+                   5 + nb_servos * 3, # msg length
+                   CMD_SERVO_MOVE,
+                   nb_servos]
         command.extend(integer_to_bits(time_ms))
         for i, servo_id in enumerate(servo_ids):
             command.append(servo_id)
