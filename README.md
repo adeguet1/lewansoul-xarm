@@ -35,6 +35,7 @@ catkin build
 ## Usage
 
 ```python
+import math
 import lewansoul_xarm
 c = lewansoul_xarm.controller()
 HIDDevice:
@@ -45,6 +46,12 @@ HIDDevice:
     interface_number: 0
 connected to xArm controller serial number: 49770F673737
 a = c.add_arm(5, 4, 3)
+a.disable() # turn off servos
+# now manually move the arm to zero position
+a.calibrate() # this is a one time thing, you can re-use the calibration later on
+a.home()
+a.is_homed()
 p = a.measured_jp()
+p[0] = p[0] + math.pi / 4.0 # start with a small motion
 a.move_jp(p)
 ```
