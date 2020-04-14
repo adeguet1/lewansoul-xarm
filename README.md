@@ -24,3 +24,27 @@ You can create a rule using the product name since it seems specific enough to i
 ### `hidraw` device not created properly
 
 The last issue is a lot more annoying and we don't have a good fix.  From time to time, the `hidraw` device is not properly created.  I found an error message in ` /var/log/syslog` related to FuEngine.  This seems to be a feature to automatically check/upgrade a device's firmware.  The only way we found to avoid this is to disable the service `fwupd` using `sudo service fwupd stop` (has to be done after every reboot) or ` sudo apt remove fwupd ` (completely remove fwupd).  If anyone has a better solution, please raise your hand.
+
+## Build
+
+```sh
+cd ~/catkin_ws/src
+catkin build
+```
+
+## Usage
+
+```python
+import lewansoul_xarm
+c = lewansoul_xarm.controller()
+HIDDevice:
+    /dev/hidraw3 | 483:5750 | MyUSB_HID | LOBOT | 49770F673737
+    release_number: 513
+    usage_page: 0
+    usage: 0
+    interface_number: 0
+connected to xArm controller serial number: 49770F673737
+a = c.add_arm(5, 4, 3)
+p = a.measured_jp()
+a.move_jp(p)
+```
