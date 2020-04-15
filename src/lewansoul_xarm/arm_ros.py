@@ -42,6 +42,7 @@ class arm_ros(object):
         rospy.Subscriber(ns + "disable", std_msgs.msg.Empty, self.disable)
         rospy.Subscriber(ns + "home", std_msgs.msg.Empty, self.home)
         rospy.Subscriber(ns + "calibrate", std_msgs.msg.Empty, self.calibrate)
+        rospy.Subscriber(ns + "move_jp", sensor_msgs.msg.JointState, self.move_jp)
 
     def publish(self):
         measured_jp = self._arm.measured_jp()
@@ -59,3 +60,7 @@ class arm_ros(object):
 
     def calibrate(self, msg):
         self._arm.calibrate()
+
+    def move_jp(self, msg):
+        goal = numpy.array(msg.position)
+        self._arm.move_jp(goal)
