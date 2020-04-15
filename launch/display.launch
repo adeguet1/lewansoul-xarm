@@ -6,7 +6,7 @@
   <param name="robot_description" command="$(find xacro)/xacro.py $(arg model)" />
 
   <rosparam param="source_list" subst_value="True">
-    [/xArm/measured_js]
+    [/arm/measured_js]
   </rosparam>
 
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />

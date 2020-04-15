@@ -7,11 +7,11 @@ import lewansoul_xarm
 def ros_main():
     # connect to xArm
     controller = lewansoul_xarm.controller()
-    arm = controller.add_arm("xArm", 6, 5, 4, 3, 2) # only the first 5 joints are for kinematics
+    arm = controller.add_arm("arm", "xArm-49770F673737-arm.json")
     arm.enable()
     arm.home()
 
-    gripper = controller.add_arm("gripper", 1)
+    gripper = controller.add_arm("gripper", "xArm-49770F673737-gripper.json")
     gripper.enable()
     gripper.home()
 

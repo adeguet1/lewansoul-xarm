@@ -79,8 +79,8 @@ class controller(object):
         self._device.close()
 
 
-    def add_arm(self, name, *servo_ids):
-        new_arm = lewansoul_xarm.arm(self, name, servo_ids)
+    def add_arm(self, name, config_file):
+        new_arm = lewansoul_xarm.arm(self, name, config_file)
         self._arms.append(new_arm)
         return new_arm
 

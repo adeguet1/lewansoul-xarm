@@ -39,7 +39,7 @@ class arm(object):
     arm.move_jp(position)
     """
 
-    def __init__(self, controller, name, servo_ids):
+    def __init__(self, controller, name, config_file):
         """Initialize the robot using a controller and a list of servo ids.
         The constructor also creates a unique id for the arm using the
         controller's serial number and the list of servo ids used for
@@ -47,12 +47,12 @@ class arm(object):
         """
         self._controller = controller
         self._name = name
-        self._servo_ids = servo_ids
-        self._unique_name = 'xArm-' + self._controller._serial_number + '-' + '-'.join(map(str, servo_ids))
+        self._config_file = config_file
         self._configuration = {}
-        self._position_offsets = numpy.zeros(len(servo_ids))
-        self._goal_jp = numpy.zeros(len(servo_ids))
+        self._servo_ids = []
+#        self._goal_jp = numpy.zeros(0)
         self._is_homed = False
+        self.configure(config_file)
 
     def __del__(self):
         self.disable()
@@ -83,11 +83,11 @@ class arm(object):
         time task.
         """
         # get raw positions from controller
-        position_si = self._controller.measured_jp(self._servo_ids)
+        position_si = numpy.multiply(self._directions, self._controller.measured_jp(self._servo_ids))
         self._position_offsets = reference_position_si - position_si
         # save calibrations results for later use, convert array to list
         self._configuration['offsets'] = self._position_offsets.tolist()
-        with open(self._unique_name + '.json', 'w') as f:
+        with open(self._config_file, 'w') as f:
             f.write(json.dumps(self._configuration, sort_keys = True,
                                indent = 4, separators = (', ', ': ')))
 
@@ -95,35 +95,51 @@ class arm(object):
         self._is_homed = True
 
 
-    def configure(self, config_file = ''):
-        """Configure the arm using a JSON configuration file.  If the file
-        name is not provided, the method searches for a JSON file
-        named after the arm unique id.  The configuration file must
-        contain the position offsets vector (see calibrate()).
+    def configure(self, config_file):
+        """Configure the arm using a JSON configuration file.  The
+        configuration file must contain the board ids, controller
+        serial number and the position offsets vector (see
+        calibrate()).
         """
-        if config_file == '':
-            config_file = self._unique_name + '.json'
-
         try:
             with open(config_file, 'r') as f:
                 self._configuration = json.load(f)
-        except IOError as e:
-            return False
         except ValueError as e:
             print(e)
-            return False
+            raise
+        except:
+            raise
 
+        # serial number [required]
+        if not 'controller-serial-number' in self._configuration.keys():
+            raise Exception('controller-serial-number is not defined in ' + config_file)
+        assert self._configuration['controller-serial-number'] == self._controller._serial_number
+
+        # servo ids [required]
+        if not 'servo-ids' in self._configuration.keys():
+            raise Exception('servo-ids are not defined in ' + config_file)
+        self._servo_ids = self._configuration['servo-ids']
+
+        # offsets [optional]
         if not 'offsets' in self._configuration.keys():
-            print('offsets are not defined in ' + config_file)
-            return False
-        if len(self._configuration['offsets']) != len(self._servo_ids):
-            print('incorrect number of offsets found in ' + config_file)
-            return False
+            self._position_offsets = numpy.zeros(len(self._servo_ids))
+        else:
+            if len(self._configuration['offsets']) != len(self._servo_ids):
+                raise Exception('incorrect number of offsets found in ' + config_file)
+            else:
+                self._position_offsets = numpy.array(self._configuration['offsets'])
 
-        self._position_offsets = numpy.array(self._configuration['offsets'])
+        # directions [optional]
+        if not 'directions' in self._configuration.keys():
+            self._directions = numpy.ones(len(self._servo_ids))
+        else:
+            if len(self._configuration['directions']) != len(self._servo_ids):
+                raise Exception('incorrect number of directions found in ' + config_file)
+            else:
+                self._directions = numpy.array(self._configuration['directions'])
+
         self._goal_jp = self.measured_jp()
         self._is_homed = True
-        return True
 
 
     def enable(self):
@@ -148,7 +164,7 @@ class arm(object):
 
 
     def measured_jp(self):
-        return self._controller.measured_jp(self._servo_ids) + self._position_offsets
+        return numpy.multiply(self._directions, self._controller.measured_jp(self._servo_ids)) + self._position_offsets
 
 
     def goal_jp(self):
@@ -160,4 +176,6 @@ class arm(object):
 
     def move_jp(self, goals_si, time_s = 0.0):
         self._goal_jp = goals_si[:]
-        self._controller.move_jp(self._servo_ids, goals_si - self._position_offsets, time_s)
+        self._controller.move_jp(self._servo_ids,
+                                 numpy.multiply(self._directions, (goals_si - self._position_offsets)),
+                                 time_s)
