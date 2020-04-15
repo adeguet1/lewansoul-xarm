@@ -55,7 +55,9 @@ class controller(object):
         for dev in devices:
             print(dev.description())
 
-        assert len(devices) > 0
+        if len(devices) == 0:
+            raise Exception('no device detected, make sure the arm is powered, connected and you have read-write permissions on /dev/hidraw')
+
         self._device = devices[0]
 
         # open a device
@@ -76,6 +78,7 @@ class controller(object):
 
     def __del__(self):
         print('closing xArm controller')
+        self.shutdown()
         self._device.close()
 
 
@@ -131,6 +134,12 @@ class controller(object):
             self._device.write(itertools.chain(command, servo_ids))
 
 
+    def shutdown(self):
+        for arm in self._arms:
+            print('shutting down ' + arm._name)
+            self.disable(arm._servo_ids)
+
+
     def move_jp(self, servo_ids, goals_si, time_s = 0.0):
         nb_servos = len(goals_si)
         assert nb_servos == len(servo_ids)
@@ -140,7 +149,7 @@ class controller(object):
             time_s = 2.0
         elif time_s > 20:
             time_s = 20.0
-        time_ms = int(time_s * 1000);
+        time_ms = int(time_s * 1000)
 
         # convert
         goals = goals_si / self.bits_to_si

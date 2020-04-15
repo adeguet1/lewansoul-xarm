@@ -30,13 +30,16 @@ class arm_ros(object):
         self._arm = arm
 
         ns = self._arm._name + '/'
-        # create publishers
-        self._measured_js_msg = sensor_msgs.msg.JointState()
+        # create publishers and corresponding message
+        self._js_msg = sensor_msgs.msg.JointState()
         for i in range(len(self._arm._servo_ids)):
-            self._measured_js_msg.name.append(self._arm._name + str(i + 1))
+            self._js_msg.name.append(self._arm._name + str(i + 1))
         self._measured_js_publisher = rospy.Publisher(ns + 'measured_js',
                                                       sensor_msgs.msg.JointState,
                                                       queue_size = 10)
+        self._goal_js_publisher = rospy.Publisher(ns + 'goal_js',
+                                                  sensor_msgs.msg.JointState,
+                                                  queue_size = 10)
         # create subscribers
         rospy.Subscriber(ns + "enable", std_msgs.msg.Empty, self.enable)
         rospy.Subscriber(ns + "disable", std_msgs.msg.Empty, self.disable)
@@ -45,9 +48,17 @@ class arm_ros(object):
         rospy.Subscriber(ns + "move_jp", sensor_msgs.msg.JointState, self.move_jp)
 
     def publish(self):
-        measured_jp = self._arm.measured_jp()
-        self._measured_js_msg.position[:] = measured_jp.flat
-        self._measured_js_publisher.publish(self._measured_js_msg)
+        try:
+            # measured
+            measured_jp = self._arm.measured_jp()
+            self._js_msg.position[:] = measured_jp.flat
+            self._measured_js_publisher.publish(self._js_msg)
+            # goal
+            goal_jp = self._arm.goal_jp()
+            self._js_msg.position[:] = goal_jp.flat
+            self._goal_js_publisher.publish(self._js_msg)
+        except:
+            pass
 
     def enable(self, msg):
         self._arm.enable()
