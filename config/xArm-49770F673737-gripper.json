@@ -1,7 +1,12 @@
 {
-    "controller-serial-number": "49770F673737",
-    "servo-ids": [1],
+    "controller-serial-number": "49770F673737", 
+    "directions": [
+        -1.0
+    ], 
     "offsets": [
-        -2.500707752257475
+        2.810678227411668
+    ], 
+    "servo-ids": [
+        1
     ]
 }
