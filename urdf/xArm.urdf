@@ -25,7 +25,7 @@
         <cylinder length="0.013" radius="0.04"/>
       </geometry>
       <material name="blue">
-	<color rgba="0.3 0.3 0.9 1.0"/>
+	<color rgba="0.3 0.5 0.9 1.0"/>
       </material>
     </visual>
     <visual>
@@ -34,7 +34,7 @@
         <box size="0.044 0.0285 0.0065"/>
       </geometry>
       <material name="blue">
-	<color rgba="0.3 0.3 0.9 1.0"/>
+	<color rgba="0.3 0.5 0.9 1.0"/>
       </material>
     </visual>
     <visual>
@@ -43,7 +43,7 @@
         <box size="0.044 0.0285 0.023"/>
       </geometry>
       <material name="black">
-	<color rgba="0.1 0.1 0.1 1"/>
+	<color rgba="0.2 0.2 0.2 1"/>
       </material>
     </visual>
   </link>
@@ -62,7 +62,7 @@
         <box size="0.032 0.002 0.052"/>
       </geometry>
       <material name="blue">
-	<color rgba="0.3 0.3 0.9 1.0"/>
+	<color rgba="0.3 0.5 0.9 1.0"/>
       </material>
     </visual>
     <visual>
@@ -71,7 +71,7 @@
         <box size="0.032 0.002 0.052"/>
       </geometry>
       <material name="blue">
-	<color rgba="0.3 0.3 0.9 1.0"/>
+	<color rgba="0.3 0.5 0.9 1.0"/>
       </material>
     </visual>
     <visual>
@@ -80,7 +80,7 @@
         <box size="0.032 0.042 0.002"/>
       </geometry>
       <material name="blue">
-	<color rgba="0.3 0.3 0.9 1.0"/>
+	<color rgba="0.3 0.5 0.9 1.0"/>
       </material>
     </visual>
     <visual>
@@ -98,7 +98,7 @@
         <box size="0.025 0.042 0.002"/>
       </geometry>
       <material name="blue">
-	<color rgba="0.3 0.3 0.9 1.0"/>
+	<color rgba="0.3 0.5 0.9 1.0"/>
       </material>
     </visual>
     <visual>
@@ -107,7 +107,7 @@
         <box size="0.025 0.002 0.045"/>
       </geometry>
       <material name="blue">
-	<color rgba="0.3 0.3 0.9 1.0"/>
+	<color rgba="0.3 0.5 0.9 1.0"/>
       </material>
     </visual>
     <visual>
@@ -116,7 +116,7 @@
         <box size="0.025 0.002 0.045"/>
       </geometry>
       <material name="blue">
-	<color rgba="0.3 0.3 0.9 1.0"/>
+	<color rgba="0.3 0.5 0.9 1.0"/>
       </material>
     </visual>
   </link>
@@ -135,7 +135,7 @@
         <box size="0.023 0.0285 0.044"/>
       </geometry>
       <material name="black">
-	<color rgba="0.1 0.1 0.1 1"/>
+	<color rgba="0.2 0.2 0.2 1"/>
       </material>
     </visual>
     <visual>
@@ -144,7 +144,7 @@
         <box size="0.023 0.0285 0.004"/>
       </geometry>
       <material name="blue">
-	<color rgba="0.3 0.3 0.9 1.0"/>
+	<color rgba="0.3 0.5 0.9 1.0"/>
       </material>
     </visual>
     <visual>
@@ -162,7 +162,7 @@
         <box size="0.023 0.0285 0.004"/>
       </geometry>
       <material name="blue">
-	<color rgba="0.3 0.3 0.9 1.0"/>
+	<color rgba="0.3 0.5 0.9 1.0"/>
       </material>
     </visual>
     <visual>
@@ -171,7 +171,7 @@
         <box size="0.023 0.0285 0.044"/>
       </geometry>
       <material name="black">
-	<color rgba="0.1 0.1 0.1 1"/>
+	<color rgba="0.2 0.2 0.2 1"/>
       </material>
     </visual>
   </link>
@@ -190,7 +190,7 @@
         <box size="0.025 0.002 0.064"/>
       </geometry>
       <material name="blue">
-	<color rgba="0.3 0.3 0.9 1.0"/>
+	<color rgba="0.3 0.5 0.9 1.0"/>
       </material>
     </visual>
     <visual>
@@ -199,7 +199,7 @@
         <box size="0.025 0.002 0.064"/>
       </geometry>
       <material name="blue">
-	<color rgba="0.3 0.3 0.9 1.0"/>
+	<color rgba="0.3 0.5 0.9 1.0"/>
       </material>
     </visual>
     <visual>
@@ -208,7 +208,7 @@
         <box size="0.025 0.042 0.002"/>
       </geometry>
       <material name="blue">
-	<color rgba="0.3 0.3 0.9 1.0"/>
+	<color rgba="0.3 0.5 0.9 1.0"/>
       </material>
     </visual>
     <visual>
@@ -217,7 +217,7 @@
         <box size="0.044 0.023 0.0285"/>
       </geometry>
       <material name="black">
-	<color rgba="0.1 0.1 0.1 1"/>
+	<color rgba="0.2 0.2 0.2 1"/>
       </material>
     </visual>
   </link>
@@ -229,6 +229,15 @@
     <axis xyz="0 0 1"/>
   </joint>
 
-  <link name="link5"/>
-
+  <link name="link5">
+    <visual>
+      <origin rpy="0 0 0.0" xyz="0 0 0"/>
+      <geometry>
+        <cylinder length="0.004" radius="0.01"/>
+      </geometry>
+      <material name="black">
+	<color rgba="0.2 0.2 0.2 1.0"/>
+      </material>
+    </visual>
+  </link>
 </robot>
