@@ -82,8 +82,8 @@ class controller(object):
         self._device.close()
 
 
-    def add_arm(self, name, config_file):
-        new_arm = lewansoul_xarm.arm(self, name, config_file)
+    def add_arm(self, name, config_file, urdf_file = ''):
+        new_arm = lewansoul_xarm.arm(self, name, config_file, urdf_file)
         self._arms.append(new_arm)
         return new_arm
 

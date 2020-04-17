@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
+import os
 import rospy
+import rospkg
 import lewansoul_xarm
 
 def shutdown():
@@ -12,7 +14,15 @@ def ros_main():
     # connect to xArm
     global controller # so we can shutdown
     controller = lewansoul_xarm.controller()
-    arm = controller.add_arm("arm", "xArm-49770F673737-arm.json")
+
+    rospack = rospkg.RosPack()
+    pkg_path = rospack.get_path('lewansoul_xarm')
+    
+    urdf_file = pkg_path + '/urdf/xArm.urdf'
+    if not os.path.isfile(urdf_file):
+        print('couldn\'t find file: ' + urdf_file + '. cartesian moves will be disabled')
+        urdf_file = ''
+    arm = controller.add_arm("arm", "xArm-49770F673737-arm.json", urdf_file)
     arm.enable()
     arm.home()
 

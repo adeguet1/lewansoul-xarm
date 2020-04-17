@@ -17,6 +17,9 @@
 
 import numpy
 import json
+import urdf_parser_py.urdf
+import kdl_parser_py.urdf
+import PyKDL
 
 class arm(object):
     """Arm class to define a logical arm on top of the servo controller.
@@ -39,7 +42,7 @@ class arm(object):
     arm.move_jp(position)
     """
 
-    def __init__(self, controller, name, config_file):
+    def __init__(self, controller, name, config_file, urdf_file = ''):
         """Initialize the robot using a controller and a list of servo ids.
         The constructor also creates a unique id for the arm using the
         controller's serial number and the list of servo ids used for
@@ -50,9 +53,13 @@ class arm(object):
         self._config_file = config_file
         self._configuration = {}
         self._servo_ids = []
-#        self._goal_jp = numpy.zeros(0)
         self._is_homed = False
+        self._has_kin = False
         self.configure(config_file)
+        if not urdf_file == '':
+            self._has_kin = True
+            self.configure_urdf(urdf_file)
+
 
     def __del__(self):
         self.disable()
@@ -138,8 +145,19 @@ class arm(object):
             else:
                 self._directions = numpy.array(self._configuration['directions'])
 
-        self._goal_jp = self.measured_jp()
-        self._is_homed = True
+        self._measured_jp = numpy.zeros(len(self._servo_ids))
+        self._goal_jp =  numpy.zeros(len(self._servo_ids))
+        self._measured_cp = PyKDL.Frame()
+
+
+    def configure_urdf(self, urdf_file):
+        self._kdl_urdf = urdf_parser_py.urdf.URDF.from_xml_file(urdf_file)
+        status, self._kdl_tree = kdl_parser_py.urdf.treeFromUrdfModel(self._kdl_urdf)
+        assert status
+        self._kdl_chain = self._kdl_tree.getChain('base_link', 'link5')
+        self._kdl_fk = PyKDL.ChainFkSolverPos_recursive(self._kdl_chain)
+        self._kdl_joints = PyKDL.JntArray(5)
+
 
 
     def enable(self):
@@ -160,11 +178,25 @@ class arm(object):
 
     def home(self):
         if not self._is_homed:
-            self.configure()
+            self.get_data()
+            self.move_jp(self._measured_jp)
+            self._is_homed = True
+
+
+    def get_data(self):
+        self._measured_jp = numpy.multiply(self._directions, self._controller.measured_jp(self._servo_ids)) + self._position_offsets
+        if self._has_kin:
+            for i in range(5):
+                self._kdl_joints[i] = self._measured_jp[i]
+            status = self._kdl_fk.JntToCart(self._kdl_joints, self._measured_cp, 5)
 
 
     def measured_jp(self):
-        return numpy.multiply(self._directions, self._controller.measured_jp(self._servo_ids)) + self._position_offsets
+        return self._measured_jp
+
+
+    def measured_cp(self):
+        return self._measured_cp
 
 
     def goal_jp(self):
