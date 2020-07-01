@@ -1,6 +1,8 @@
 ## Introduction
 
-This package allows to control a Lewansoul xArm robot from a Linux PC with ROS.  It uses the HID interface between your PC and the Arduino board imbedded in the xArm.  Said Arduino board then communicates with the servos (6 of them) using a serial TTL UART connection.  It is also possible to communicate directly with the servo units with a serial communication (and bypass the arduino board on the base) but this is not supported by the code in this repository.
+This package allows to control a Lewansoul xArm robot from a Linux PC with ROS.  It uses the HID interface between your PC and the Arduino board imbedded in the xArm.  Said Arduino board then communicates with the servos (6 of them, LX 15 D) using a serial TTL UART connection.  It is also possible to communicate directly with the servo units with a serial communication (and bypass the arduino board on the base) but this is not supported by the code in this repository.
+
+To note, the arm is sometimes listed as a 6-DOF robot (degree of freedom) but it is actually a 5 DOF + 1 for the gripper.  So it is an under actuated arm and one can't reach all possible 3D position/orientation.
 
 ## Requirements
 
@@ -80,3 +82,27 @@ For RViz:
 ```sh
 roslaunch lewansoul_xarm display.launch
 ```
+
+# Links
+
+## Hardware
+* Manufacturer: Hiwonder in HK - I’m not sure what is the proper brand for this product, maybe it is sold under two different names, either Lewansoul or Hiwonder: https://www.hiwonder.hk 
+* Amazon page: https://smile.amazon.com/gp/product/B0793PFGCY
+* YouTube Channel with assembly instructions:
+  * https://www.youtube.com/watch?v=0nGwqJCcUuE
+  * https://www.youtube.com/watch?v=IjKZ74H3Q4o&t=125s
+* Vendor for single actuator, has more technical data: https://usa.banggood.com/LOBOT-LX-15D-Serial-Bus-Servo-Metal-Gear-Dual-Shaft-Large-Torque-For-RC-Robot-p-1372532.html
+* Serial communication protocol for LX 16 A (not the exact model used in our arm): https://github.com/RoboticsBrno/Robotic-arm/blob/master/Hardware/Servo-LX16-A/Lewansoul%20Bus%20Servo%20Communication%20Protocol.pdf
+* LX 16 A documentation (not the exact model used in our arm): https://images-na.ssl-images-amazon.com/images/I/91DLnW8nTnL.pdf
+* CAD for LX-15D, the servo used in the arm we have: https://grabcad.com/library/lewansoul-lx-15d-servo-1
+
+## Software
+* Light Python wrapper for direct servo: https://github.com/Roger-random/SGVHAK_Rover/blob/master/SGVHAK_Rover/lewansoul_wrapper.py
+* Another Python wrapper with GUI for direct servo: https://github.com/maximkulkin/lewansoul-lx16a
+* Python over HID (code I started from):
+  * https://gist.github.com/maximecb/7fd42439e8a28b9a74a4f7db68281071
+  * https://github.com/ccourson/LewanSoul-xArm/issues/7?fbclid=IwAR0rXDFUnZRi0rPvOVP7_1yvddLER_ChwoFYI8bTqBlQylNzd1iQYaT3XX4#issuecomment-504570455
+
+
+
+
