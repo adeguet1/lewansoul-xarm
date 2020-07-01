@@ -6,6 +6,8 @@ To note, the arm is sometimes listed as a 6-DOF robot (degree of freedom) but it
 
 If you find bugs or want to add some extra features, don't hesitate to create a pull request :-)
 
+Naming convention is loosely based on CRTK: https://github.com/collaborative-robotics/documentation/wiki/Robot-API-motion
+
 ## Requirements
 
 ### Software
