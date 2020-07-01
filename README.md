@@ -4,6 +4,8 @@ This package allows to control a Lewansoul xArm robot from a Linux PC with ROS. 
 
 To note, the arm is sometimes listed as a 6-DOF robot (degree of freedom) but it is actually a 5 DOF + 1 for the gripper.  So it is an under actuated arm and one can't reach all possible 3D position/orientation.
 
+If you find bugs or want to add some extra features, don't hesitate to create a pull request :-)
+
 ## Requirements
 
 ### Software
