@@ -2,7 +2,7 @@
 
 This package allows to control a Lewansoul xArm robot from a Linux PC with ROS.  It uses the HID interface between your PC and the Arduino board imbedded in the xArm.  Said Arduino board then communicates with the servos (6 of them, LX 15 D) using a serial TTL UART connection.  It is also possible to communicate directly with the servo units with a serial communication (and bypass the arduino board on the base) but this is not supported by the code in this repository.
 
-To note, the arm is sometimes listed as a 6-DOF robot (degree of freedom) but it is actually a 5 DOF + 1 for the gripper.  So it is an under actuated arm and one can't reach all possible 3D position/orientation.
+To note, the arm is sometimes listed as a 6-DOF robot (degree of freedom) but it is actually a 5 DOF + 1 for the gripper.  So it is an under actuated arm and one can't reach all possible 3D positions/orientations.
 
 If you find bugs or want to add some extra features, don't hesitate to create a pull request :-)
 
