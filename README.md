@@ -40,6 +40,8 @@ catkin build
 
 ## Usage
 
+This is for the low-level controller, i.e. not using ROS.  This code allows to create an "arm" using any subset of servos (in the example, I randomly used 5, 4 and 3).  In practice, this allows to create a first group of 5 servos (the kinematic part of the arm) and a second group with one servo (the gripper).   The ROS example below handles the grouping and also includes URDF import for the kinematic part.
+
 ```python
 import math
 import lewansoul_xarm
@@ -74,13 +76,20 @@ To start the controller ROS node:
 rosrun lewansoul_xarm xArm-ros.py
 ```
 
+The ROS node is defined in `scripts/xArm-ros.py`.  It treats the first 5 servos as a kinematic chain and the last servo is used for the gripper.
+
 To calibrate (this has to be done for `/xArm` and `/gripper`):
 ```sh
+# disable servos so user can move the arm manually
 rostopic pub -1 /xArm/disable std_msgs/Empty "{}"
-# now move the arm to zero position
+# now move the arm to mechanical zero position...
+# once done, initiate calibration.   This will save the joint offsets
 rostopic pub -1 /xArm/calibrate std_msgs/Empty "{}"
+# and now re-enable the arm.  It is now ready to use...
 rostopic pub -1 /xArm/enable std_msgs/Empty "{}"
 ```
+
+Calibration results are saved in files and can be reloaded automatically.  The calibration files should be uniquely named using the controller's serial number and arm name.
 
 For RViz:
 ```sh
